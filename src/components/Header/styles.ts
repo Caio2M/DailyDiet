@@ -8,12 +8,12 @@ export const Container = styled.View`
 
 export const Logo = styled.Image`
   width: 87px;
-  height: 37px;
+  height: 40px;
 `;
 
 export const Image = styled.Image`
   width: 40px;
   height: 40px;
-  border-radius: 20px;
+  border-radius: 30px;
   border: 1px solid black;
 `;

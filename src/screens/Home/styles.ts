@@ -1,19 +1,21 @@
-import styled from "styled-components/native";
 
+import styled from "styled-components/native";
 
 export const Container = styled.View`
   flex: 1;
   background-color: ${({ theme }) => theme.COLORS.WHITE};
-  padding: 25px;
+  padding: 30px;
 `;
 
-export const ContainerText = styled.View`
+export const BodyText = styled.Text`
+  font-size: ${({theme})=> theme.FONT_SIZE.BODY.M}px;
+  color: ${({theme})=> theme.COLORS.GRAY_100};
+`;
+
+export const ContainerMeal = styled.View`
+  /* background-color: red; */
   flex: 2;
-  background-color: red;
 `;
 
-export const Text = styled.Text`
-  color: black;
-  font-size: ${({ theme }) => theme.FONT_SIZE.TITLE.G}px;
-  text-align: center;
-`;
+
+
