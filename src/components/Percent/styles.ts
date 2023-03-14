@@ -9,7 +9,7 @@ type Props = {
 export const Container = styled(TouchableOpacity)`
 ${({theme})=> css<Props>`
   width: 100%;
-  padding: 20px 10px;
+  padding: 5px 5px 20px 5px;
   justify-content: center;
 
   background-color: ${({isPositive}) => isPositive ? theme.COLORS.MID_GREEN : theme.COLORS.MID_RED};;
@@ -21,6 +21,7 @@ ${({theme})=> css<Props>`
 export const Title = styled.Text`
   color: ${({theme})=> theme.COLORS.GRAY_100};
   font-size: ${({theme}) => theme.FONT_SIZE.TITLE.G}px;
+  line-height: 32px;
   text-align: center;
   font-weight: bold;
 `;

@@ -1,46 +1,35 @@
 import { Container, ContainerMeal, BodyText } from "./styles";
 import { Header } from "@components/Header";
 import { Percent } from "@components/Percent";
-import { Button } from "@components/Button";
-import { useState } from "react";
-import { FlatList } from "react-native";
+import { CustomButton } from "@components/CustomButton";
+import { SectionList } from "react-native";
 import { CardMeal } from "@components/CardMeal";
-import { v4 as uuid } from "uuid";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useDiet } from "../../DataFormContext";
+import { Ionicons } from "@expo/vector-icons";
 
-type Meal = {
-  name: string;
-  inDiet?: boolean;
-  time: string;
-  id: string;
-  date: string;
+type RouteParams = {
+  inDiet: boolean;
 };
-export function Home() {
-  const [meals, setMeals] = useState<Meal[]>([
-    {
-      name: "arroz",
-      inDiet: true,
-      id: uuid(),
-      time: "09:00",
-      date: "10/05/2005",
-    },
-  ]);
-  const filterMealsInDiet = meals.filter((food) => food.inDiet);
-  const percent = filterMealsInDiet.length * (100 / meals.length);
 
-  function add() {
-    setMeals([
-      ...meals,
-      {
-        name: "arroz",
-        inDiet: false,
-        id: uuid(),
-        time: "09:00",
-        date: "10/05/2005",
-      },
-    ]);
+export function Home() {
+  const { diet } = useDiet();
+
+  const navigation = useNavigation();
+
+  const filterdietInDiet = diet.filter((food) =>
+    food.data.some((item) => item.inDiet)
+  );
+
+  const percent = filterdietInDiet.length * (100 / diet.length);
+
+  function toForm() {
+    navigation.navigate("newMeal");
   }
 
-  console.log(meals);
+  function toStatistic() {
+    navigation.navigate("statistic");
+  }
 
   return (
     <>
@@ -51,27 +40,46 @@ export function Home() {
           style={{ marginTop: 20, marginBottom: 30 }}
           percent={percent}
           subTitle="das refeições dentro da dieta"
+          onPress={toStatistic}
         />
 
         <ContainerMeal>
           <BodyText>Refeições</BodyText>
 
-          <Button
+          <CustomButton
             text="Nova refeição"
             style={{ marginTop: 10 }}
-            onPress={add}
+            onPress={toForm}
+            nameIcon="add"
+            icon={
+              <Ionicons
+                name={"add"}
+                size={20}
+                style={{ fontWeight: "bold", color: "white" }}
+              />
+            }
+            size={20}
+            color="white"
           />
 
-          <BodyText style={{ marginTop: 20, fontWeight: "bold" }}>
-            12.08.22
-          </BodyText>
-          <FlatList
-            data={meals}
+          <SectionList
+            style={{ marginTop: 30 }}
+            showsVerticalScrollIndicator={false}
+            sections={diet}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <CardMeal name={item.name} time={item.time} />
+              <CardMeal
+                name={item.name}
+                time={item.time}
+                inDiet={item.inDiet}
+              />
             )}
-          ></FlatList>
+            renderSectionHeader={({ section: { title } }) => (
+              <BodyText style={{ marginTop: 20, fontWeight: "bold" }}>
+                {title.replaceAll("/", ".").slice(0, 6) + title.slice(8, 10)}
+              </BodyText>
+            )}
+          />
         </ContainerMeal>
       </Container>
     </>

@@ -1,10 +1,12 @@
-import { FlatList, TouchableOpacity } from "react-native";
+import { FlatList, TouchableOpacity, TouchableOpacityProps } from "react-native";
 import styled from "styled-components/native";
 
-export const Container = styled(TouchableOpacity)`
+export const Container = styled(TouchableOpacity)<TouchableOpacityProps>`
   width: 100%;
-  text-align: center;
+  justify-content: center;
+  align-items: center;
   background-color: ${({theme})=> theme.COLORS.GRAY_200};
+  flex-direction: row;
 
   border-radius: 10px;
 
@@ -13,6 +15,6 @@ export const Container = styled(TouchableOpacity)`
 
 export const Text = styled.Text`
   color: ${({theme})=> theme.COLORS.WHITE};
-  font-weight: 200;
+  font-weight: 400;
   text-align: center;
 `;

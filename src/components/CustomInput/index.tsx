@@ -6,11 +6,12 @@ import {
   Path,
   useForm,
 } from "react-hook-form";
+import { TextInputProps } from "react-native";
 
-interface CustomInputProps<T extends FieldValues> {
+interface CustomInputProps<T extends FieldValues> extends TextInputProps {
   name: Path<T>;
   control: Control<T>;
-  placeHolder: string;
+  placeHolder?: string;
   errorMessage?: string;
   isInvalid?: boolean;
 }
@@ -21,6 +22,7 @@ export function CustomInput<T extends FieldValues>({
   placeHolder,
   errorMessage,
   isInvalid = false,
+  ...Props
 }: CustomInputProps<T>) {
   return (
     <Controller
@@ -35,6 +37,7 @@ export function CustomInput<T extends FieldValues>({
               onBlur={onBlur}
               value={String(value)}
               placeholder={placeHolder}
+              {...Props}
             />
 
             <Message>{errorMessage || ""}</Message>
