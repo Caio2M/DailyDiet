@@ -13,7 +13,7 @@ import {
 import * as yup from "yup";
 import { Keyboard, Modal, View } from "react-native";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { CustomInput } from "@components/CustomInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
@@ -22,16 +22,40 @@ import { useState } from "react";
 import { CustomButton } from "@components/CustomButton";
 import DatePicker from "react-native-modern-datepicker";
 import { DietProps, useDiet } from "../../DataFormContext";
-import { v4 as uuid } from "uuid";
 
-export function NewMeal() {
+type RouteParams = {
+  nameByMeal: string;
+  descriptionByMeal: string | undefined;
+  id: string;
+  dateByMeal: string;
+  timeByMeal: string;
+  inDietByMeal: boolean;
+};
+
+export function Edit() {
+  const navigation = useNavigation();
   const { diet, setDiet } = useDiet();
+
+  const route = useRoute();
+  const { id } = route.params as RouteParams;
+
+  const arrayDiet = diet
+    .map((a) => a.data)
+    .map((a) => a.filter((a) => a.id === id));
+
+  const nameByMeal = arrayDiet.map((a) => a.map((a) => a.name));
+  const descriptionByMeal = arrayDiet.map((a) => a.map((a) => a.description));
+  const inDietByMeal = arrayDiet.map((a) => a.map((a) => a.inDiet));
+  const dateByMeal = arrayDiet.map((a) => a.map((a) => a.date));
+  const timeByMeal = arrayDiet.map((a) => a.map((a) => a.time));
+
+  const [name, setName] = useState(nameByMeal[0][0]);
+  const [description, setDescription] = useState(descriptionByMeal[0][0]);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTimeVisible, setModalTimeVisible] = useState(false);
 
-  const [inDiet, setInDiet] = useState(true);
-  const navigation = useNavigation();
+  const [inDiet, setInDiet] = useState(inDietByMeal[0][0]);
 
   var day = new Date().getDate().toString();
   const trueDay = day.length === 1 ? (day = "0" + day) : day;
@@ -55,8 +79,8 @@ export function NewMeal() {
     inDiet: yup.boolean(),
   });
 
-  const [dateForm, setDateForm] = useState(`${data}`);
-  const [timeForm, setTimeForm] = useState(`${time}`);
+  const [dateForm, setDateForm] = useState(`${dateByMeal}`);
+  const [timeForm, setTimeForm] = useState(`${timeByMeal}`);
 
   function handleTime(time: string) {
     setTimeForm(time);
@@ -90,17 +114,17 @@ export function NewMeal() {
   });
 
   function onSubmit(form: FormProps) {
-    navigation.navigate("feedback", { inDiet: inDiet });
+    navigation.navigate("meal");
     Keyboard.dismiss();
     reset();
     const newForm: DietProps = {
       title: newDate,
-      id: uuid(),
+      id: id,
       data: [
         {
           name: form.name,
           description: form.description,
-          id: uuid(),
+          id: id,
           inDiet: inDiet, // subistituir por state
           time: timeForm,
           date: newDate,
@@ -108,32 +132,32 @@ export function NewMeal() {
       ],
     };
 
-    const groupedByDate: Record<string, DietProps> = diet.reduce(
-      (acc, item) => {
-        return { ...acc, [item.title]: { ...item } };
-      },
-      {}
-    );
-    const newFood = {
-      [newForm.title]: newForm,
-    };
-    const newFoodData = Object.values(newFood)[0];
-    let newGroupedByDate;
+    // const groupedByDate: Record<string, DietProps> = diet.reduce(
+    //   (acc, item) => {
+    //     return { ...acc, [item.title]: { ...item } };
+    //   },
+    //   {}
+    // );
+    // const newFood = {
+    //   [newForm.title]: newForm,
+    // };
+    // const newFoodData = Object.values(newFood)[0];
+    // let newGroupedByDate;
 
-    if (!groupedByDate[newFoodData.title]) {
-      newGroupedByDate = Object.assign(groupedByDate, newFood);
-      return setDiet(Object.values(newGroupedByDate));
-    }
+    // if (!groupedByDate[newFoodData.title]) {
+    //   newGroupedByDate = Object.assign(groupedByDate, newFood);
+    //   return setDiet(Object.values(newGroupedByDate));
+    // }
 
-    const dateExists = groupedByDate[newFoodData.title];
-    const updateFood = {
-      [newFoodData.title]: {
-        ...dateExists,
-        data: [...dateExists.data, ...newFoodData.data],
-      },
-    };
-    newGroupedByDate = Object.assign(groupedByDate, updateFood);
-    return setDiet(Object.values(newGroupedByDate));
+    // const dateExists = groupedByDate[newFoodData.title];
+    // const updateFood = {
+    //   [newFoodData.title]: {
+    //     ...dateExists,
+    //     data: [...dateExists.data, ...newFoodData.data],
+    //   },
+    // };
+    // newGroupedByDate = Object.assign(groupedByDate, updateFood);
+    // return setDiet(Object.values(newGroupedByDate));
   }
 
   function isNotInDiet() {
@@ -147,10 +171,10 @@ export function NewMeal() {
   return (
     <Container onTouchStart={Keyboard.dismiss}>
       <Header>
-        <BackButton onPress={() => navigation.navigate("home")}>
+        <BackButton onPress={() => navigation.navigate("meal")}>
           <MaterialIcons name="arrow-back" size={24} color="black" />
         </BackButton>
-        <Title>Nova refeição</Title>
+        <Title>Editar refeição</Title>
       </Header>
       <Content>
         <Form>
@@ -169,6 +193,8 @@ export function NewMeal() {
               paddingBottom: 10,
               fontSize: theme.FONT_SIZE.BODY.M,
             }}
+            value={name}
+            onChangeText={setName}
             cursorColor="black"
           />
           <Text>Descrição</Text>
@@ -189,6 +215,8 @@ export function NewMeal() {
               paddingBottom: 10,
               fontSize: theme.FONT_SIZE.BODY.M,
             }}
+            value={description}
+            onChangeText={setDescription}
             cursorColor="black"
           />
           <TwoDiv>
@@ -374,7 +402,7 @@ export function NewMeal() {
         </Form>
         <CustomButton
           icon
-          text={"Cadastrar refeição"}
+          text={"Salvar alterações"}
           onPress={handleSubmit(onSubmit)}
         />
       </Content>

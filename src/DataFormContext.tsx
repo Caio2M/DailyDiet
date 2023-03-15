@@ -3,9 +3,11 @@ import { v4 as uuid } from "uuid";
 
 export type DataProps = {
   name: string;
+  description: string | undefined;
   inDiet: boolean;
   time: string;
   id: string;
+  date: string;
 };
 export type DietProps = {
   title: string;
@@ -30,12 +32,17 @@ export function DietProvider({ children }: DietProviderProps) {
       id: uuid(),
       title: "10/05/2022",
       data: [
-        { name: "Arroz e Carne", inDiet: true, id: uuid(), time: "09:00" },
+        {
+          name: "Arroz e Carne",
+          description: "dcaoodcidoac",
+          inDiet: true,
+          id: uuid(),
+          time: "09:00",
+          date: "10/05/2022",
+        },
       ],
     },
   ]);
-
-  function blabla() {}
 
   return (
     <DietContext.Provider

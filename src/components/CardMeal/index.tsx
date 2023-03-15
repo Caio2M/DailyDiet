@@ -1,16 +1,23 @@
 import { Container, Meal, Time, Div } from "./styles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import theme from "../../theme";
+import { TouchableOpacityProps } from "react-native/Libraries/Components/Touchable/TouchableOpacity";
+import { useNavigation } from "@react-navigation/native";
 
-type Props = {
+type Props = TouchableOpacityProps & {
   name: string;
   time: string;
   inDiet: boolean;
+  id: string;
 };
 
-export function CardMeal({ name, time, inDiet }: Props) {
+export function CardMeal({ name, time, inDiet, id }: Props) {
+  const navigation = useNavigation();
   return (
-    <Container style={{ marginTop: 10 }}>
+    <Container
+      onPress={() => navigation.navigate("meal", { id: id })}
+      style={{ marginTop: 10 }}
+    >
       <Div>
         <Time style={{ marginRight: 10 }}>{time}</Time>
         <Meal>| {name}</Meal>

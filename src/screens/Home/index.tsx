@@ -4,9 +4,10 @@ import { Percent } from "@components/Percent";
 import { CustomButton } from "@components/CustomButton";
 import { SectionList } from "react-native";
 import { CardMeal } from "@components/CardMeal";
-import { useNavigation, useRoute } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { useDiet } from "../../DataFormContext";
 import { Ionicons } from "@expo/vector-icons";
+import { useState } from "react";
 
 type RouteParams = {
   inDiet: boolean;
@@ -72,6 +73,7 @@ export function Home() {
                 name={item.name}
                 time={item.time}
                 inDiet={item.inDiet}
+                id={item.id}
               />
             )}
             renderSectionHeader={({ section: { title } }) => (
