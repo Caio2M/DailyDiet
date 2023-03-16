@@ -5,7 +5,7 @@ import {
   Nunito_700Bold,
   useFonts,
 } from "@expo-google-fonts/nunito";
-
+//testando pra ver modificação
 import theme from "./src/theme";
 import { Routes } from "./src/routes";
 import { DietProvider } from "./src/DataFormContext";
