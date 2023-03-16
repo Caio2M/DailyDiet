@@ -148,6 +148,7 @@ export function Edit() {
       }
     });
 
+    // testando git
     setDiet(update);
 
     navigation.navigate("meal", { id: id });
