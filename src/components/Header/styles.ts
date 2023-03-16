@@ -14,6 +14,5 @@ export const Logo = styled.Image`
 export const Image = styled.Image`
   width: 40px;
   height: 40px;
-  border-radius: 30px;
-  border: 1px solid black;
+  border-radius: 20px;
 `;

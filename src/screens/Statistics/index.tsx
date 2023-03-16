@@ -18,13 +18,9 @@ export function Statistics() {
 
   const navigation = useNavigation();
 
-  const filterdietInDiet = diet.filter((food) =>
-    food.data.some((item) => item.inDiet)
-  );
+  const filterdietInDiet = diet.filter((food) => food.inDiet === true);
 
-  const filterMealOutDiet = diet.filter((food) =>
-    food.data.some((item) => item.inDiet === false)
-  );
+  const filterMealOutDiet = diet.filter((food) => food.inDiet === false);
 
   const allMealsOutDiet = filterMealOutDiet.length;
 
@@ -44,6 +40,24 @@ export function Statistics() {
     : Number.isInteger(percent) // SE NÃO FOR NULO VERIFICA SE O NUMERO É INTEIRO
     ? percent // SE FOR INTEIRO RETORNA O PERCENT
     : Number(percent.toFixed(2)); // SE NÃO FOR INTEIRO ELE TRATA PRA LIMITAR AS CASAS DECIMAIS DEPOIS DA VIRGULA
+
+  const arrayInDiet = diet.map((a) => a.inDiet);
+
+  function maxTrueSeqLen(arrayInDiet: any) {
+    let maxSeqLen = 0;
+    let curSeqLen = 0;
+    for (let i = 0; i < arrayInDiet.length; i++) {
+      if (arrayInDiet[i]) {
+        curSeqLen++;
+      } else {
+        maxSeqLen = Math.max(maxSeqLen, curSeqLen);
+        curSeqLen = 0;
+      }
+    }
+    maxSeqLen = Math.max(maxSeqLen, curSeqLen);
+    return maxSeqLen;
+  }
+  const maxLen = maxTrueSeqLen(arrayInDiet);
 
   return (
     <Container
@@ -77,7 +91,7 @@ export function Statistics() {
             padding: 20,
           }}
         >
-          <Title>1</Title>
+          <Title>{maxLen}</Title>
           <SubTitle>melhor sequência de pratos dentro da dieta</SubTitle>
         </Div>
 

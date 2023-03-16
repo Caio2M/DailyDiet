@@ -21,7 +21,7 @@ import theme from "../../theme";
 import { useState } from "react";
 import { CustomButton } from "@components/CustomButton";
 import DatePicker from "react-native-modern-datepicker";
-import { DietProps, useDiet } from "../../DataFormContext";
+import { DataProps, DietProps, useDiet } from "../../DataFormContext";
 import { v4 as uuid } from "uuid";
 
 export function NewMeal() {
@@ -93,47 +93,43 @@ export function NewMeal() {
     navigation.navigate("feedback", { inDiet: inDiet });
     Keyboard.dismiss();
     reset();
-    const newForm: DietProps = {
-      title: newDate,
+    const newForm: DataProps = {
+      name: form.name,
+      description: form.description,
       id: uuid(),
-      data: [
-        {
-          name: form.name,
-          description: form.description,
-          id: uuid(),
-          inDiet: inDiet, // subistituir por state
-          time: timeForm,
-          date: newDate,
-        },
-      ],
+      inDiet: inDiet, // subistituir por state
+      time: timeForm,
+      date: newDate,
     };
 
-    const groupedByDate: Record<string, DietProps> = diet.reduce(
-      (acc, item) => {
-        return { ...acc, [item.title]: { ...item } };
-      },
-      {}
-    );
-    const newFood = {
-      [newForm.title]: newForm,
-    };
-    const newFoodData = Object.values(newFood)[0];
-    let newGroupedByDate;
+    setDiet([...diet, newForm]);
 
-    if (!groupedByDate[newFoodData.title]) {
-      newGroupedByDate = Object.assign(groupedByDate, newFood);
-      return setDiet(Object.values(newGroupedByDate));
-    }
+    //   const groupedByDate: Record<string, DietProps> = diet.reduce(
+    //     (acc, item) => {
+    //       return { ...acc, [item.title]: { ...item } };
+    //     },
+    //     {}
+    //   );
+    //   const newFood = {
+    //     [newForm.title]: newForm,
+    //   };
+    //   const newFoodData = Object.values(newFood)[0];
+    //   let newGroupedByDate;
 
-    const dateExists = groupedByDate[newFoodData.title];
-    const updateFood = {
-      [newFoodData.title]: {
-        ...dateExists,
-        data: [...dateExists.data, ...newFoodData.data],
-      },
-    };
-    newGroupedByDate = Object.assign(groupedByDate, updateFood);
-    return setDiet(Object.values(newGroupedByDate));
+    //   if (!groupedByDate[newFoodData.title]) {
+    //     newGroupedByDate = Object.assign(groupedByDate, newFood);
+    //     return setDiet(Object.values(newGroupedByDate));
+    //   }
+
+    //   const dateExists = groupedByDate[newFoodData.title];
+    //   const updateFood = {
+    //     [newFoodData.title]: {
+    //       ...dateExists,
+    //       data: [...dateExists.data, ...newFoodData.data],
+    //     },
+    //   };
+    //   newGroupedByDate = Object.assign(groupedByDate, updateFood);
+    //   return setDiet(Object.values(newGroupedByDate));
   }
 
   function isNotInDiet() {

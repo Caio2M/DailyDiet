@@ -20,29 +20,14 @@ interface DietProviderProps {
 }
 
 interface DietContextProps {
-  diet: DietProps[];
-  setDiet: React.Dispatch<React.SetStateAction<DietProps[]>>;
+  diet: DataProps[];
+  setDiet: React.Dispatch<React.SetStateAction<DataProps[]>>;
 }
 
 const DietContext = createContext({} as DietContextProps);
 
 export function DietProvider({ children }: DietProviderProps) {
-  const [diet, setDiet] = useState<DietProps[]>([
-    {
-      id: uuid(),
-      title: "10/05/2022",
-      data: [
-        {
-          name: "Arroz e Carne",
-          description: "dcaoodcidoac",
-          inDiet: true,
-          id: uuid(),
-          time: "09:00",
-          date: "10/05/2022",
-        },
-      ],
-    },
-  ]);
+  const [diet, setDiet] = useState<DataProps[]>([]);
 
   return (
     <DietContext.Provider

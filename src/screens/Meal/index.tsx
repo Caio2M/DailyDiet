@@ -32,14 +32,6 @@ export function Meal() {
   const { id } = route.params as RouteParams;
   const { diet, setDiet } = useDiet();
 
-  const name = diet.filter((item) => item.data[0].id === id)[0].data[0].name;
-  const description = diet.filter((item) => item.data[0].id === id)[0].data[0]
-    .description;
-  const inDiet = diet.filter((item) => item.data[0].id === id)[0].data[0]
-    .inDiet;
-  const date = diet.filter((item) => item.data[0].id === id)[0].data[0].date;
-  const time = diet.filter((item) => item.data[0].id === id)[0].data[0].time;
-
   function handleButtonEdit() {
     navigation.navigate("edit", {
       id: id,
@@ -52,6 +44,7 @@ export function Meal() {
 
   function onDelete() {
     setIsModelVisible(false);
+    setDiet((diet) => diet.filter((a) => a.id !== id));
 
     navigation.navigate("home");
   }
@@ -60,10 +53,14 @@ export function Meal() {
     setIsModelVisible(false);
   }
 
+  const item = diet.find((a) => a.id === id);
+
+  // return <Title>adcdcadc</Title>;
+
   return (
     <Container
       style={{
-        backgroundColor: inDiet
+        backgroundColor: item?.inDiet
           ? theme.COLORS.LIGHT_GREEN
           : theme.COLORS.LIGHT_RED,
       }}
@@ -78,22 +75,24 @@ export function Meal() {
         <BodyTitle
           style={{ fontSize: theme.FONT_SIZE.TITLE.M, marginBottom: 10 }}
         >
-          {name}
+          {item?.name}
         </BodyTitle>
-        <Text style={{ marginBottom: 20 }}>{description}</Text>
+        <Text style={{ marginBottom: 20 }}>{item?.description}</Text>
         <BodyTitle
           style={{ fontSize: theme.FONT_SIZE.TITLE.XS, marginBottom: 10 }}
         >
           Data e hora
         </BodyTitle>
         <Text style={{ fontSize: theme.FONT_SIZE.TITLE.XS, marginBottom: 14 }}>
-          {date} às {time}
+          {item?.date} às {item?.time}
         </Text>
         <InDietContainer>
           <MaterialIcons
             name="circle"
             size={8}
-            color={inDiet ? theme.COLORS.DARK_GREEN : theme.COLORS.DARK_RED}
+            color={
+              item?.inDiet ? theme.COLORS.DARK_GREEN : theme.COLORS.DARK_RED
+            }
           />
           <Text
             style={{
@@ -101,7 +100,7 @@ export function Meal() {
               color: theme.COLORS.GRAY_100,
             }}
           >
-            {inDiet ? "dentro da dieta" : "fora da dieta"}
+            {item?.inDiet ? "dentro da dieta" : "fora da dieta"}
           </Text>
         </InDietContainer>
 

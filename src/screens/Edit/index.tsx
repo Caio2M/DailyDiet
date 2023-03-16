@@ -35,59 +35,24 @@ type RouteParams = {
 export function Edit() {
   const navigation = useNavigation();
   const { diet, setDiet } = useDiet();
-
   const route = useRoute();
   const { id } = route.params as RouteParams;
 
-  const arrayDiet = diet
-    .map((a) => a.data)
-    .map((a) => a.filter((a) => a.id === id));
-
-  const nameByMeal = diet.filter((item) => item.data[0].id === id)[0].data[0]
-    .name;
-  const descriptionByMeal = diet.filter((item) => item.data[0].id === id)[0]
-    .data[0].description;
-  const inDietByMeal = diet.filter((item) => item.data[0].id === id)[0].data[0]
-    .inDiet;
-  const dateByMeal = diet.filter((item) => item.data[0].id === id)[0].data[0]
-    .date;
-  const timeByMeal = diet.filter((item) => item.data[0].id === id)[0].data[0]
-    .time;
-
-  const [name, setName] = useState(nameByMeal);
-  const [description, setDescription] = useState(descriptionByMeal);
+  const item = diet.find((a) => a.id === id);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTimeVisible, setModalTimeVisible] = useState(false);
+  const [dateForm, setDateForm] = useState(item?.date);
+  const [timeForm, setTimeForm] = useState(item?.time);
 
-  const [inDiet, setInDiet] = useState(inDietByMeal);
-
-  // console.log(diet.filter((item) => item.data[0].id === id)[0]);
-
-  var day = new Date().getDate().toString();
-  const trueDay = day.length === 1 ? (day = "0" + day) : day;
-  var month = new Date().getDay().toString();
-  const trueMonth = month.length === 1 ? (month = "0" + month) : month;
-  const year = new Date().getFullYear().toString();
-  const data = day + "/" + month + "/" + year;
-  const date = year + "-" + month + "-" + day;
-
-  var hour = new Date().getHours().toString();
-  const trueHour = hour.length === 1 ? (hour = "0" + hour) : hour;
-  var minutes = new Date().getMinutes().toString();
-  const trueMinute = minutes.length === 1 ? (minutes = "0" + minutes) : minutes;
-  const time = hour + ":" + minutes;
+  const [inDiet, setInDiet] = useState(item?.inDiet);
 
   const yupSchema = yup.object({
     name: yup.string(),
     description: yup.string().max(200),
     date: yup.string(),
     hour: yup.string(),
-    inDiet: yup.boolean(),
   });
-
-  const [dateForm, setDateForm] = useState(`${dateByMeal}`);
-  const [timeForm, setTimeForm] = useState(`${timeByMeal}`);
 
   function handleTime(time: string) {
     setTimeForm(time);
@@ -101,9 +66,13 @@ export function Edit() {
 
   type FormProps = yup.InferType<typeof yupSchema>;
 
-  let parts = dateForm.split("/");
-  parts[0].length === 4 ? parts.reverse() : parts;
-  const newDate = parts.join("/");
+  const parts = dateForm?.split("/");
+  const partsIsReverse = parts
+    ? parts[0].length === 4
+      ? parts.reverse()
+      : parts
+    : "";
+  const newDate = partsIsReverse ? partsIsReverse.join("/") : "";
 
   const {
     control,
@@ -112,44 +81,25 @@ export function Edit() {
   } = useForm<FormProps>({
     resolver: yupResolver(yupSchema),
     defaultValues: {
-      name: name,
-      description: description,
+      name: item?.name,
+      description: item?.description,
       date: dateForm,
-      hour: time,
-      inDiet: inDiet,
+      hour: timeForm,
     },
   });
 
   function onSubmit(form: FormProps) {
-    Keyboard.dismiss();
+    const update = {
+      name: form.name,
+      description: form.description,
+      date: newDate,
+      time: timeForm,
+      inDiet: inDiet,
+    };
 
-    const update = diet.map(() => {
-      if (
-        diet
-          .map((a) => a.data.map((a) => a.id === id).find((a) => a))
-          .filter((a) => a === true)
-      ) {
-        return {
-          id: id,
-          title: newDate,
-          data: [
-            {
-              name: name,
-              date: newDate,
-              id: id,
-              description: description,
-              inDiet: inDiet,
-              time: timeForm,
-            },
-          ],
-        };
-      } else {
-        return console.error("Erro, objeto não achado");
-      }
-    });
+    const a = diet.map((a) => (a.id === id ? { ...a, ...update } : a));
 
-    // testando git
-    setDiet(update);
+    setDiet(a);
 
     navigation.navigate("meal", { id: id });
   }
@@ -187,8 +137,6 @@ export function Edit() {
               paddingBottom: 10,
               fontSize: theme.FONT_SIZE.BODY.M,
             }}
-            value={name}
-            onChangeText={setName}
             cursorColor="black"
           />
           <Text>Descrição</Text>
@@ -209,8 +157,6 @@ export function Edit() {
               paddingBottom: 10,
               fontSize: theme.FONT_SIZE.BODY.M,
             }}
-            value={description}
-            onChangeText={setDescription}
             cursorColor="black"
           />
           <TwoDiv>

@@ -12,15 +12,9 @@ type RouteParams = {
 
 export function FeedBack() {
   const navigation = useNavigation();
-  const { diet } = useDiet();
 
   const route = useRoute();
   const { inDiet } = route.params as RouteParams;
-
-  const mealCreated = diet.length - 1;
-  const isPositive = diet
-    .map((food) => food.data)
-    [mealCreated].some((item) => item.inDiet);
 
   const titlePositive = "Continue assim!";
   const textPositive1 = "Você continua ";
@@ -38,24 +32,24 @@ export function FeedBack() {
       <Content>
         <Title
           style={{
-            color: isPositive ? theme.COLORS.DARK_GREEN : theme.COLORS.DARK_RED,
+            color: inDiet ? theme.COLORS.DARK_GREEN : theme.COLORS.DARK_RED,
             marginBottom: 15,
             fontWeight: "600",
           }}
         >
-          {isPositive ? titlePositive : titleNegative}
+          {inDiet ? titlePositive : titleNegative}
         </Title>
         <Content style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Text>{isPositive ? textPositive1 : textNegative1}</Text>
+          <Text>{inDiet ? textPositive1 : textNegative1}</Text>
           <Text style={{ fontWeight: "bold" }}>
-            {isPositive ? textPositive2 : textNegative2}
+            {inDiet ? textPositive2 : textNegative2}
           </Text>
-          <Text>{isPositive ? textPositive3 : textNegative3}</Text>
+          <Text>{inDiet ? textPositive3 : textNegative3}</Text>
         </Content>
-        <Text>{isPositive ? "" : textNegative4}</Text>
+        <Text>{inDiet ? "" : textNegative4}</Text>
         <Img
           style={{ marginBottom: 40, marginTop: 40 }}
-          source={isPositive ? ImagePositive : ImageNegative}
+          source={inDiet ? ImagePositive : ImageNegative}
         />
         <CustomButton
           text={"Ir para a página inicial"}

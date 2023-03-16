@@ -8,6 +8,7 @@ import { useNavigation } from "@react-navigation/native";
 import { useDiet } from "../../DataFormContext";
 import { Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
+import { v4 as uuid } from "uuid";
 
 type RouteParams = {
   inDiet: boolean;
@@ -18,11 +19,8 @@ export function Home() {
 
   const navigation = useNavigation();
 
-  const filterdietInDiet = diet.filter((food) =>
-    food.data.some((item) => item.inDiet)
-  );
-
-  const percent = filterdietInDiet.length * (100 / diet.length);
+  const item = diet.filter((a) => a.inDiet === true);
+  const percent = item.length * (100 / diet.length);
 
   function toForm() {
     navigation.navigate("newMeal");
@@ -31,6 +29,21 @@ export function Home() {
   function toStatistic() {
     navigation.navigate("statistic");
   }
+
+  const group = diet.reduce((acc: any, meal: any) => {
+    acc[meal.date] = acc[meal.date] ? [...acc[meal.date], meal] : [meal];
+    return acc;
+  }, {});
+
+  const toShow = Object.entries(group).map(([key, value]) => {
+    return {
+      id: uuid(),
+      title: key,
+      data: value,
+    };
+  });
+
+  // return <BodyText>dcadcacada</BodyText>;
 
   return (
     <>
@@ -66,7 +79,7 @@ export function Home() {
           <SectionList
             style={{ marginTop: 30 }}
             showsVerticalScrollIndicator={false}
-            sections={diet}
+            sections={toShow}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
               <CardMeal
