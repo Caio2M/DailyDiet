@@ -43,19 +43,26 @@ export function Edit() {
     .map((a) => a.data)
     .map((a) => a.filter((a) => a.id === id));
 
-  const nameByMeal = arrayDiet.map((a) => a.map((a) => a.name));
-  const descriptionByMeal = arrayDiet.map((a) => a.map((a) => a.description));
-  const inDietByMeal = arrayDiet.map((a) => a.map((a) => a.inDiet));
-  const dateByMeal = arrayDiet.map((a) => a.map((a) => a.date));
-  const timeByMeal = arrayDiet.map((a) => a.map((a) => a.time));
+  const nameByMeal = diet.filter((item) => item.data[0].id === id)[0].data[0]
+    .name;
+  const descriptionByMeal = diet.filter((item) => item.data[0].id === id)[0]
+    .data[0].description;
+  const inDietByMeal = diet.filter((item) => item.data[0].id === id)[0].data[0]
+    .inDiet;
+  const dateByMeal = diet.filter((item) => item.data[0].id === id)[0].data[0]
+    .date;
+  const timeByMeal = diet.filter((item) => item.data[0].id === id)[0].data[0]
+    .time;
 
-  const [name, setName] = useState(nameByMeal[0][0]);
-  const [description, setDescription] = useState(descriptionByMeal[0][0]);
+  const [name, setName] = useState(nameByMeal);
+  const [description, setDescription] = useState(descriptionByMeal);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTimeVisible, setModalTimeVisible] = useState(false);
 
-  const [inDiet, setInDiet] = useState(inDietByMeal[0][0]);
+  const [inDiet, setInDiet] = useState(inDietByMeal);
+
+  // console.log(diet.filter((item) => item.data[0].id === id)[0]);
 
   var day = new Date().getDate().toString();
   const trueDay = day.length === 1 ? (day = "0" + day) : day;
@@ -72,7 +79,7 @@ export function Edit() {
   const time = hour + ":" + minutes;
 
   const yupSchema = yup.object({
-    name: yup.string().required("O nome é obrigatório"),
+    name: yup.string(),
     description: yup.string().max(200),
     date: yup.string(),
     hour: yup.string(),
@@ -101,63 +108,49 @@ export function Edit() {
   const {
     control,
     handleSubmit,
-    reset,
     formState: { errors },
   } = useForm<FormProps>({
     resolver: yupResolver(yupSchema),
     defaultValues: {
-      name: "",
-      description: "",
+      name: name,
+      description: description,
       date: dateForm,
       hour: time,
+      inDiet: inDiet,
     },
   });
 
   function onSubmit(form: FormProps) {
-    navigation.navigate("meal");
     Keyboard.dismiss();
-    reset();
-    const newForm: DietProps = {
-      title: newDate,
-      id: id,
-      data: [
-        {
-          name: form.name,
-          description: form.description,
+
+    const update = diet.map(() => {
+      if (
+        diet
+          .map((a) => a.data.map((a) => a.id === id).find((a) => a))
+          .filter((a) => a === true)
+      ) {
+        return {
           id: id,
-          inDiet: inDiet, // subistituir por state
-          time: timeForm,
-          date: newDate,
-        },
-      ],
-    };
+          title: newDate,
+          data: [
+            {
+              name: name,
+              date: newDate,
+              id: id,
+              description: description,
+              inDiet: inDiet,
+              time: timeForm,
+            },
+          ],
+        };
+      } else {
+        return console.error("Erro, objeto não achado");
+      }
+    });
 
-    // const groupedByDate: Record<string, DietProps> = diet.reduce(
-    //   (acc, item) => {
-    //     return { ...acc, [item.title]: { ...item } };
-    //   },
-    //   {}
-    // );
-    // const newFood = {
-    //   [newForm.title]: newForm,
-    // };
-    // const newFoodData = Object.values(newFood)[0];
-    // let newGroupedByDate;
+    setDiet(update);
 
-    // if (!groupedByDate[newFoodData.title]) {
-    //   newGroupedByDate = Object.assign(groupedByDate, newFood);
-    //   return setDiet(Object.values(newGroupedByDate));
-    // }
-
-    // const dateExists = groupedByDate[newFoodData.title];
-    // const updateFood = {
-    //   [newFoodData.title]: {
-    //     ...dateExists,
-    //     data: [...dateExists.data, ...newFoodData.data],
-    //   },
-    // };
-    // newGroupedByDate = Object.assign(groupedByDate, updateFood);
-    // return setDiet(Object.values(newGroupedByDate));
+    navigation.navigate("meal", { id: id });
   }
 
   function isNotInDiet() {
@@ -171,7 +164,7 @@ export function Edit() {
   return (
     <Container onTouchStart={Keyboard.dismiss}>
       <Header>
-        <BackButton onPress={() => navigation.navigate("meal")}>
+        <BackButton onPress={() => navigation.navigate("meal", { id: id })}>
           <MaterialIcons name="arrow-back" size={24} color="black" />
         </BackButton>
         <Title>Editar refeição</Title>

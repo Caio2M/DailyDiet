@@ -30,17 +30,15 @@ export function Meal() {
   const navigation = useNavigation();
   const route = useRoute();
   const { id } = route.params as RouteParams;
-  const { diet } = useDiet();
+  const { diet, setDiet } = useDiet();
 
-  const arrayDiet = diet
-    .map((a) => a.data)
-    .map((a) => a.filter((a) => a.id === id));
-
-  const name = arrayDiet.map((a) => a.map((a) => a.name));
-  const description = arrayDiet.map((a) => a.map((a) => a.description));
-  const inDiet = arrayDiet.map((a) => a.map((a) => a.inDiet));
-  const date = arrayDiet.map((a) => a.map((a) => a.date));
-  const time = arrayDiet.map((a) => a.map((a) => a.time));
+  const name = diet.filter((item) => item.data[0].id === id)[0].data[0].name;
+  const description = diet.filter((item) => item.data[0].id === id)[0].data[0]
+    .description;
+  const inDiet = diet.filter((item) => item.data[0].id === id)[0].data[0]
+    .inDiet;
+  const date = diet.filter((item) => item.data[0].id === id)[0].data[0].date;
+  const time = diet.filter((item) => item.data[0].id === id)[0].data[0].time;
 
   function handleButtonEdit() {
     navigation.navigate("edit", {
@@ -54,7 +52,7 @@ export function Meal() {
 
   function onDelete() {
     setIsModelVisible(false);
-    console.error("VOCE CLICOU EM EXCLUIR A REFEIÇÃO");
+
     navigation.navigate("home");
   }
 
