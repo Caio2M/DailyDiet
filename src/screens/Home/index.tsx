@@ -5,9 +5,8 @@ import { CustomButton } from "@components/CustomButton";
 import { SectionList } from "react-native";
 import { CardMeal } from "@components/CardMeal";
 import { useNavigation } from "@react-navigation/native";
-import { useDiet } from "../../DataFormContext";
+import { DataProps, DietProps, useDiet } from "../../DataFormContext";
 import { Ionicons } from "@expo/vector-icons";
-import { useState } from "react";
 import { v4 as uuid } from "uuid";
 
 type RouteParams = {
@@ -30,12 +29,15 @@ export function Home() {
     navigation.navigate("statistic");
   }
 
-  const group = diet.reduce((acc: any, meal: any) => {
-    acc[meal.date] = acc[meal.date] ? [...acc[meal.date], meal] : [meal];
-    return acc;
-  }, {});
+  const group: Record<string, DataProps[]> = diet.reduce(
+    (acc: Record<string, DataProps[]>, meal) => {
+      acc[meal.date] = acc[meal.date] ? [...acc[meal.date], meal] : [meal];
+      return acc;
+    },
+    {}
+  );
 
-  const toShow = Object.entries(group).map(([key, value]) => {
+  const toShow: DietProps[] = Object.entries(group).map(([key, value]) => {
     return {
       id: uuid(),
       title: key,

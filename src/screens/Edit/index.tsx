@@ -18,10 +18,10 @@ import { CustomInput } from "@components/CustomInput";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import theme from "../../theme";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { CustomButton } from "@components/CustomButton";
 import DatePicker from "react-native-modern-datepicker";
-import { DietProps, useDiet } from "../../DataFormContext";
+import { DataProps, DietProps, useDiet } from "../../DataFormContext";
 
 type RouteParams = {
   nameByMeal: string;
@@ -38,20 +38,20 @@ export function Edit() {
   const route = useRoute();
   const { id } = route.params as RouteParams;
 
-  const item = diet.find((a) => a.id === id);
+  const item = diet.find((a) => a.id === id) || ({} as DataProps);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [modalTimeVisible, setModalTimeVisible] = useState(false);
-  const [dateForm, setDateForm] = useState(item?.date);
-  const [timeForm, setTimeForm] = useState(item?.time);
+  const [dateForm, setDateForm] = useState(item.date);
+  const [timeForm, setTimeForm] = useState(item.time);
 
   const [inDiet, setInDiet] = useState(item?.inDiet);
 
   const yupSchema = yup.object({
-    name: yup.string(),
-    description: yup.string().max(200),
-    date: yup.string(),
-    hour: yup.string(),
+    name: yup.string().required(),
+    description: yup.string().max(200).required(),
+    date: yup.string().required(),
+    hour: yup.string().required(),
   });
 
   function handleTime(time: string) {
@@ -97,7 +97,9 @@ export function Edit() {
       inDiet: inDiet,
     };
 
-    const a = diet.map((a) => (a.id === id ? { ...a, ...update } : a));
+    const a: DataProps[] = diet.map((a) =>
+      a.id === id ? { ...a, ...update } : a
+    );
 
     setDiet(a);
 
